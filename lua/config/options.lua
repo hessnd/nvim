@@ -48,7 +48,7 @@ local options = {
 }
 
 local globals = {
-  mapleader                   = ' ',        --- Map leader key to SPC
+  mapleader                   = ',',        --- Map leader key to comma
   speeddating_no_mappings     = 1,          --- Disable default mappings for speeddating
 }
 
