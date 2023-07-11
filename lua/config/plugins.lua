@@ -33,7 +33,7 @@ return {
 			require("plugins.treesitter")
 		end,
 		dependencies = {
-			"mrjones2014/nvim-ts-rainbow",
+			"hiphish/rainbow-delimiters.nvim",
 			"JoosepAlviste/nvim-ts-context-commentstring",
 			"nvim-treesitter/nvim-treesitter-textobjects",
 			"RRethy/nvim-treesitter-textsubjects",
@@ -80,7 +80,7 @@ return {
 	-- LSP Base
 	{
 		"neovim/nvim-lspconfig",
-		event = "BufReadPre",
+		lazy = false,
 		dependencies = {
 			"mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
@@ -94,24 +94,6 @@ return {
 		keys = {
 			{ "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" },
 		},
-	},
-
-	-- Formatters
-	{
-		"jose-elias-alvarez/null-ls.nvim",
-		event = "BufNewFile",
-		dependencies = { "mason.nvim" },
-	},
-	{
-		"jay-babu/mason-null-ls.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		dependencies = {
-			"williamboman/mason.nvim",
-			"jose-elias-alvarez/null-ls.nvim",
-		},
-		config = function()
-			require("plugins.null-ls")
-		end,
 	},
 
 	-- LSP Cmp
@@ -176,7 +158,18 @@ return {
 		end,
 		dependencies = "neovim/nvim-lspconfig",
 	},
-	{ "jose-elias-alvarez/typescript.nvim" },
+	{
+		"pmizio/typescript-tools.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		ft = { "typescript", "typescriptreact" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"neovim/nvim-lspconfig",
+		},
+		config = function()
+			require("plugins.typescript-tools")
+		end,
+	},
 	{
 		"axelvc/template-string.nvim",
 		event = "InsertEnter",
@@ -189,42 +182,15 @@ return {
 		config = true, -- run require("template-string").setup()
 	},
 	{
-		"lvimuser/lsp-inlayhints.nvim",
-		branch = "main", -- or "anticonceal"
-		config = function()
-			require("plugins.inlay-hints")
-		end,
-	},
-	{
-		"barrett-ruth/import-cost.nvim",
-		build = "sh install.sh yarn",
-		ft = {
-			"javascript",
-			"typescript",
-			"javascriptreact",
-			"typescriptreact",
-		},
-		config = true,
-	},
-	{
 		"dmmulroy/tsc.nvim",
 		cmd = { "TSC" },
 		config = true,
 	},
 	{
 		"dnlhc/glance.nvim",
-		config = true,
-		opts = {
-			hooks = {
-				before_open = function(results, open, jump, method)
-					if #results == 1 then
-						jump(results[1]) -- argument is optional
-					else
-						open(results) -- argument is optional
-					end
-				end,
-			},
-		},
+		config = function()
+			require("plugins.glance")
+		end,
 		cmd = { "Glance" },
 		keys = {
 			{ "gd", "<cmd>Glance definitions<CR>", desc = "LSP Definition" },
@@ -232,7 +198,18 @@ return {
 			{ "gm", "<cmd>Glance implementations<CR>", desc = "LSP Implementations" },
 			{ "gy", "<cmd>Glance type_definitions<CR>", desc = "LSP Type Definitions" },
 		},
-	},
+  },
+  {
+    "antosha417/nvim-lsp-file-operations",
+    event = "LspAttach",
+    requires = {
+      { "nvim-lua/plenary.nvim" },
+      { "kyazdani42/nvim-tree.lua" },
+    },
+    config = function()
+      require("lsp-file-operations").setup ()
+    end
+  },
 
 	-- General
 	{ "AndrewRadev/switch.vim", lazy = false },
@@ -313,11 +290,18 @@ return {
 		cond = EcoVim.plugins.zen.enabled,
 	},
 	{
-		"ggandor/lightspeed.nvim",
-		keys = "s",
-		config = function()
-			require("plugins.lightspeed")
-		end,
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		opts = {},
+		keys = {
+			{
+				"s",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+			},
+		},
 	},
 	{
 		"folke/which-key.nvim",
@@ -427,9 +411,17 @@ return {
 	{
 		"echasnovski/mini.align",
 		lazy = false,
-		version = false,
+		version = "*",
 		config = function()
 			require("mini.align").setup()
+		end,
+	},
+	{
+		"echasnovski/mini.ai",
+		lazy = false,
+		version = "*",
+		config = function()
+			require("mini.ai").setup()
 		end,
 	},
 	{
@@ -494,6 +486,16 @@ return {
 			require("plugins.colorizer")
 		end,
 	},
+	{
+		"js-everts/cmp-tailwind-colors",
+		config = true,
+	},
+	{
+		"razak17/tailwind-fold.nvim",
+		opts = {},
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		ft = { "html", "svelte", "astro", "vue", "typescriptreact" },
+	},
 
 	-- AI
 	{
@@ -544,7 +546,7 @@ return {
 	-- Git
 	{
 		"lewis6991/gitsigns.nvim",
-		event = "BufReadPre",
+		event = "BufRead",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("plugins.git.signs")
