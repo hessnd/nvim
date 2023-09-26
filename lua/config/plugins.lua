@@ -218,9 +218,9 @@ return {
   {
     "antosha417/nvim-lsp-file-operations",
     event = "LspAttach",
-    requires = {
+    dependencies = {
       { "nvim-lua/plenary.nvim" },
-      { "kyazdani42/nvim-tree.lua" },
+      { "nvim-tree/nvim-tree.lua" },
     },
     config = function()
       require("lsp-file-operations").setup()
@@ -245,7 +245,7 @@ return {
   {
     "numToStr/Comment.nvim",
     lazy = false,
-    branch = "jsx",
+    dependencies = "JoosepAlviste/nvim-ts-context-commentstring",
     config = function()
       require("plugins.comment")
     end,
@@ -470,7 +470,8 @@ return {
   },
   {
     "kylechui/nvim-surround",
-    lazy = false,
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
     config = true,
   },
   {
